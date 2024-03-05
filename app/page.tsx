@@ -16,14 +16,16 @@ type NodeValues = {
 }
 
 const value = `
-16h Ir ao dentista
+16h Go to the dentist
 
 > 2-6 30m
-12h Almoço
-14h Exercícios
+12:00 Lunch
+14h Exercise
+16h30 Meeting
+18h45m Dinner
 
 > 3,5 1h
-17h Jogar Lixo
+17h Take out the trash
 `.slice(1, -1)
 
 
