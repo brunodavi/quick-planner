@@ -21,8 +21,8 @@ export default function ThemeSwitcher() {
   if (!mounted) return null
 
   return (
-    <div className="fixed bottom-5 right-5">
-      <ThemeIcon size={24} onClick={toggleTheme} />
+    <div className="fixed cursor-pointer bottom-5 right-5">
+      <ThemeIcon size={30} onClick={toggleTheme} />
     </div>
   )
 }
