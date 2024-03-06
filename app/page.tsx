@@ -19,7 +19,7 @@ const value = `
 16h Go to the dentist
 
 > 2-6 30m
-12:00 Lunch
+12h Lunch
 14h Exercise
 16h30 Meeting
 18h45m Dinner

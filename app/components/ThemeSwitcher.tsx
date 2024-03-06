@@ -5,7 +5,11 @@ import { useTheme } from "next-themes"
 import { useState } from "react";
 
 export default function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, systemTheme, setTheme } = useTheme()
+
+  const theme = (!resolvedTheme || resolvedTheme === 'system')
+    ? systemTheme ?? 'light'
+    : resolvedTheme
 
   const ThemeIcon = (theme === 'light')
     ? MdNightlight
@@ -14,6 +18,7 @@ export default function ThemeSwitcher() {
   function toggleTheme() {
     setTheme(theme === 'light' ? 'dark' : 'light')
   }
+
 
   const [mouse, setMouse] = useState(false);
   const [timeoutId, setTimeoutId] = useState(setTimeout(() => {}));
@@ -33,7 +38,7 @@ export default function ThemeSwitcher() {
     <div className="fixed flex flex-col items-end cursor-pointer bottom-5 right-5">
       {
         mouse && (
-          <div className="bg-black p-1 m-1 mr-5 text-sm">
+          <div className="bg-black text-white p-1 m-1 mr-5 text-sm">
             {
               (theme === 'light')
                 ? 'Dark Theme'

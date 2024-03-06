@@ -47,6 +47,9 @@ function convertTime(time: string): [number?, number?] {
     .map(Number)
   )
 
+  if (hours && minutes) return [hours, minutes]
+  else if (hours) return [hours]
+
   return [hours, minutes]
 }
 
@@ -74,6 +77,7 @@ export default function Export({ jsonTree }: { jsonTree: JsonTree }) {
     const eventConfig: EventAttributes = {
       start: dateTime,
       duration: { minutes: 30 },
+      startOutputType: 'local'
     };
 
     for (const tree of Object.values(jsonTree)) {
@@ -155,7 +159,7 @@ export default function Export({ jsonTree }: { jsonTree: JsonTree }) {
   return (
     <div className="fixed flex flex-col items-end bottom-[17px] right-[70px]">
       {mouse && (
-        <div className="bg-black p-1 m-1 mr-5 text-sm">
+        <div className="bg-black text-white p-1 m-1 mr-5 text-sm">
           {
             success
               ? 'Download Success'

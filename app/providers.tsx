@@ -8,12 +8,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => setMounted(true), [])
 
-  if (!mounted) {
-    return <>{children}</>
-  }
+  if (!mounted) return null
   
   return (
-    <ThemeProvider attribute="class" enableSystem>
+    <ThemeProvider attribute="class">
       {children}
     </ThemeProvider>
   )
