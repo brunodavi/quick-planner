@@ -39,14 +39,15 @@ function createWeeklySplit(indexes: number[], interval: number = 1) {
 }
 
 function convertTime(time: string): [number?, number?] {
-  const [_, hours, minutes] = time
-    .match(/(?:^(\d\d?)[h:])?(?:(\d\d?)(?:m|$))?/)
-    .map((value) => {
-      if (value) return Number(value);
-      return undefined;
-    });
+  const matchResult = time.match(/(?:(^\d\d?)[h:])?(?:(\d\d?)m?)?/)
 
-  return minutes ? [hours, minutes] : [hours];
+  const [_, hours, minutes] = (
+    (matchResult ?? [])
+    .filter(Boolean)
+    .map(Number)
+  )
+
+  return [hours, minutes]
 }
 
 export default function Export({ jsonTree }: { jsonTree: JsonTree }) {
@@ -76,9 +77,9 @@ export default function Export({ jsonTree }: { jsonTree: JsonTree }) {
     };
 
     for (const tree of Object.values(jsonTree)) {
-      const converter = {
+      const converter: any = {
         Event(arg: { time: string; title: string }) {
-          const dateArray: DateArray = [
+          const dateArray: any = [
             ...currentDate,
             ...convertTime(arg.time),
           ];
