@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #090C10;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

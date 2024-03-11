@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { MdDownload, MdDownloadDone } from "react-icons/md";
+import { AiOutlineExport } from "react-icons/ai";
 import { createEvents, DateArray, EventAttributes } from "ics";
 import { saveAs } from "file-saver";
 
@@ -128,56 +127,14 @@ export default function Export({ jsonTree }: { jsonTree: JsonTree }) {
 
       downloadICS(value);
     });
-
-    console.log(events);
-  }
-
-  function handleClick() {
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3_000);
-
-    exportICS();
-  }
-
-  const [success, setSuccess] = useState(false);
-  const [mouse, setMouse] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(setTimeout(() => {}));
-
-  function handleMouseEnter() {
-    setTimeoutId(
-      setTimeout(() => { setMouse(true); }, 500)
-    )
-  }
-
-  function handleMouseLeave() {
-    setMouse(false);
-    clearTimeout(timeoutId)
   }
 
   return (
-    <div className="fixed flex flex-col items-end bottom-[17px] right-[70px]">
-      {mouse && (
-        <div className="bg-black text-white p-1 m-1 mr-5 text-sm">
-          {
-            success
-              ? 'Download Success'
-              : 'Download ICS'
-          }
-        </div>
-      )}
-      <div
-        className="cursor-pointer"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {
-          success
-            ? <MdDownloadDone size={30} />
-            : <MdDownload size={30} onClick={handleClick} />
-        }
-      </div>
-    </div>
+    <button onClick={exportICS} className="flex text-white rounded-md items-center justify-between bg-transparent">
+      <AiOutlineExport className="mx-1" size="90%" />
+      <span className="hidden lg:block lg:text-nowrap">
+        Export ICS
+      </span>
+    </button>
   );
 }
