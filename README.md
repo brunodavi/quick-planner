@@ -3,7 +3,8 @@
 Quick Planner is a fast calendar routine generator.
 
 ## Demo
-![quick-planner](https://github.com/brunodavi/quick-planner/assets/48166556/4ef8715e-28b4-448a-84c8-f1b54e15eeb8)
+![quick-planner](https://github.com/brunodavi/quick-planner/assets/48166556/902a551a-0846-4714-8802-2c92c80ffec1)
+
 
 Import into any calendar
 ![quick-planner-calendar](https://github.com/brunodavi/quick-planner/assets/48166556/878b02be-fb02-4a03-aac1-5b36d53383af)
