@@ -1,10 +1,19 @@
 import { AiOutlineExport } from "react-icons/ai";
-import { exportICS } from "../utils/helpers";
+import { exportICS, downloadICS } from "../utils/helpers";
 
 
 export default function Export({ jsonTree }: { jsonTree: JsonTree }) {
   function handleClick() {
-    exportICS(jsonTree)
+    const { error, value } = exportICS(jsonTree)
+
+    if (error) {
+      throw error
+    } else if (typeof value === 'string') {
+      downloadICS(value)
+    } else {
+      throw new Error(`Invalid value: ${value}`)
+    }
+
   }
 
   return (
