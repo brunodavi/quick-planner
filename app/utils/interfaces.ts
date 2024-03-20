@@ -1,16 +1,40 @@
-type Event = {
-  time: string;
-  title: string;
-};
+type EventArgs = {
+  time: string,
+  title: string,
+}
+
+type SplitArgs = {
+  time: string,
+  split: string,
+}
+
+type RangeArgs = {
+  time: string,
+  range: string,
+}
+
+
+type CommandEvent = {
+  Event: EventArgs
+}
 
 type CommandSplit = {
-  split: string;
-  time: string;
-};
+  CommandSplit: SplitArgs
+}
 
 type CommandRange = {
-  range: string;
-  time: string;
-};
+  CommandRange: RangeArgs
+}
 
-type JsonTree = (Event | CommandSplit | CommandRange)[];
+
+type TimeCommands = CommandEvent | CommandSplit | CommandRange
+
+
+type JsonTree = TimeCommands[];
+
+
+type NodeValues = {
+  name: string,
+  from: number,
+  to: number,
+}

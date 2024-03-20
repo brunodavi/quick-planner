@@ -4,6 +4,15 @@ import { saveAs } from "file-saver";
 const weeks = ",SU,MO,TU,WE,TH,FR,SA".split(",");
 
 export function createWeeklyRange(from: number, to: number, interval: number = 1) {
+  if ((from <= 0 || from > 7) || (to <= 0 || to > 7)) {
+    from = 1
+    to = 7
+  }
+
+  if (interval <= 0) {
+    interval = 1
+  }
+
   const weeksSelected = weeks
   .slice(from, to + 1)
   .join(",");
@@ -12,6 +21,14 @@ export function createWeeklyRange(from: number, to: number, interval: number = 1
 }
 
 export function createWeeklySplit(indexes: number[], interval: number = 1) {
+  if (indexes.length > 7 || indexes.some(x => x <= 0 || x > 7)) {
+    indexes = [1, 2, 3, 4, 5, 6, 7]
+  }
+
+  if (interval <= 0) {
+    interval = 1
+  }
+
   const weeksSelected = weeks
   .filter((_, index) => indexes.includes(index))
   .join(",");
@@ -19,7 +36,7 @@ export function createWeeklySplit(indexes: number[], interval: number = 1) {
   return `FREQ=WEEKLY;BYDAY=${weeksSelected};INTERVAL=${interval}`;
 }
 
-export function convertTime(time: string): [number?, number?] {
+export function convertTime(time: string): [number, number] {
   const matchResult = time.match(/(?:(^\d\d?)[h:])?(?:(\d\d?)m?)?/)
 
   const [_, hours, minutes] = (
@@ -32,13 +49,13 @@ export function convertTime(time: string): [number?, number?] {
     minutes < 0 || minutes > 59,
   ]
 
-  if (invalidValues.some(Boolean)) return [undefined, undefined]
+  if (invalidValues.some(Boolean)) return [0, 0]
 
   if (hours && minutes) return [hours, minutes]
-  else if (hours) return [hours, undefined]
-  else if (minutes) return [undefined, minutes]
+  else if (hours) return [hours, 0]
+  else if (minutes) return [0, minutes]
 
-  return [undefined, undefined]
+  return [0, 0]
 }
 
 
@@ -47,7 +64,7 @@ export function downloadICS(content: string) {
   saveAs(blob, "QuickPlanner.ics");
 }
 
-export function exportICS(jsonTree: any) {
+export function exportICS(jsonTree: JsonTree) {
   let events: EventAttributes[] = [];
 
   const date = new Date();
@@ -69,52 +86,46 @@ export function exportICS(jsonTree: any) {
     startOutputType: 'local'
   };
 
+  const converter: any = {
+    Event(arg: EventArgs) {
+      const dateArray: DateArray = [
+        ...currentDate,
+        ...convertTime(arg.time),
+      ];
+
+      events = [
+        ...events,
+        {
+          ...eventConfig,
+
+          title: arg.title,
+          start: dateArray,
+        },
+      ];
+    },
+
+    CommandSplit(arg: SplitArgs) {
+      const indexes = arg.split.split(",").map(Number);
+      const [hours, minutes] = convertTime(arg.time);
+
+      eventConfig.duration = { hours, minutes },
+      eventConfig.recurrenceRule = createWeeklySplit(indexes);
+    },
+
+    CommandRange(arg: RangeArgs) {
+      const [from, to] = arg.range.split("-").map(Number);
+      const [hours, minutes] = convertTime(arg.time);
+
+      eventConfig.duration = { hours, minutes },
+      eventConfig.recurrenceRule = createWeeklyRange(from, to);
+    },
+  };
+
   for (const tree of Object.values(jsonTree)) {
-    const converter: any = {
-      Event(arg: { time: string; title: string }) {
-        const dateArray: any = [
-          ...currentDate,
-          ...convertTime(arg.time),
-        ];
-
-        events = [
-          ...events,
-          {
-            ...eventConfig,
-
-            title: arg.title,
-            start: dateArray,
-          },
-        ];
-      },
-
-      CommandRange(arg: { range: string; time: string }) {
-        const [from, to] = arg.range.split("-").map(Number);
-        const [hours, minutes] = convertTime(arg.time);
-
-        eventConfig.duration = { hours, minutes },
-        eventConfig.recurrenceRule = createWeeklyRange(from, to);
-      },
-
-      CommandSplit(arg: { split: string; time: string }) {
-        const indexes = arg.split.split(",").map(Number);
-        const [hours, minutes] = convertTime(arg.time);
-
-        eventConfig.duration = { hours, minutes },
-        eventConfig.recurrenceRule = createWeeklySplit(indexes);
-      },
-    };
-
-    for (const [comand, arg] of Object.entries(tree)) {
-      converter[comand](arg);
+    for (const [command, arg] of Object.entries(tree)) {
+      converter[command](arg);
     }
   }
 
-  createEvents(events, (err, value) => {
-    if (err) {
-      throw err;
-    }
-
-    downloadICS(value);
-  })
+  return createEvents(events)
 }
