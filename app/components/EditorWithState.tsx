@@ -21,7 +21,7 @@ const template = `
 
 export default function EditorWithInitialState(props: { setJsonTree: Dispatch<SetStateAction<JsonTree>> }) {
   const serializedState = localStorage.getItem('EditorState');
-  const value = localStorage.getItem('EditorValue') || template;
+  const value = localStorage.getItem('EditorValue') ?? template;
 
   function parseTokens(text: string) {
     const parser = quickPlanner().language.parser
@@ -84,7 +84,7 @@ export default function EditorWithInitialState(props: { setJsonTree: Dispatch<Se
       initialState={
         serializedState
           ? {
-              json: JSON.parse(serializedState || ''),
+              json: JSON.parse(serializedState ?? ''),
               fields: stateFields,
           }
           : undefined
